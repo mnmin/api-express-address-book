@@ -5,10 +5,11 @@ const morgan = require("morgan")
 //Include the cors middleware
 const cors = require("cors")
 
-const contacts = require("./contacts")
-
 //Create a new express application
 const app = express()
+const contacts = require("./contacts")
+const { request } = require("express")
+app.use(express.json())
 
 //Tell express we want to use the morgan library
 app.use(morgan("dev"))
@@ -17,13 +18,45 @@ app.use(cors())
 
 app.get("/contacts", (req, res) => {
     
-    res.json({contacts})
+    res.json({ contacts })
    })
 
+function nextContactId() {
+    let nextId = 0
+    contacts.forEach(contact => {
+        if(contact.id > nextId)
+        nextId = contact.id
+    })
+    return(nextId + 1)
+}
+
+app.post('/contacts', (req, res) => {
+     
+    const newContact = {
+        id: nextContactId(),
+        ...req.body,
+        meetings: []
+    }
+
+    console.log("new contact = ", newContact)
+
+    contacts.push(newContact)
+
+    res.json({ contact: newContact })
+})
+
+app.get('/contacts/:id', (req, res) => {
+    
+    const id = Number(req.params.id)
+    const contact = contacts.find(contact => contact.id === id)
+    
+    res.json({ contact })
+})
 
 
 
 
+// delete => filter the array etc.
 
 //Start up our server
 const port = 3030
