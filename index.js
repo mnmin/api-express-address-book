@@ -53,7 +53,27 @@ app.get('/contacts/:id', (req, res) => {
     res.json({ contact })
 })
 
+app.delete('/contacts/:id', (req, res) => {
 
+    const id = Number(req.params.id)
+    const contact = contacts.filter(contacts => contacts.id === id)
+    const index = contacts.indexOf(contact)
+
+    const deletedContact = contacts.splice(index, 1)
+  
+    res.json({contact: deletedContact})
+})
+
+app.put('/contacts/:id', (req, res) => {
+    const updateContact = req.body
+    const id = Number(req.params.id)
+    updateContact.id = id
+
+    const contact = contacts.find(contact => contact.id === id)
+    
+
+    res.json({ contact })
+})
 
 
 // delete => filter the array etc.
